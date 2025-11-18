@@ -3,5 +3,4 @@ import java.util.Map;
 
 public interface IRateScrapingService {
     Map<String, Double> scrapeRates() ;
-    boolean scrapeAndDetectChange();
 }

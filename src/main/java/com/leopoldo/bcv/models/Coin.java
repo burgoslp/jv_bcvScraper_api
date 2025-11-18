@@ -1,12 +1,13 @@
 package com.leopoldo.bcv.models;
 
-import java.util.Set;
-
+import java.util.List;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -25,10 +26,11 @@ public class Coin {
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(mappedBy = "coins")
-    private Set<Rate> rates;
+    @OneToMany(mappedBy = "coin", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Exchange> exchanges;
     
     @NotBlank
+    @Column(unique = true)
     private String name;
     @NotBlank
     private String code;

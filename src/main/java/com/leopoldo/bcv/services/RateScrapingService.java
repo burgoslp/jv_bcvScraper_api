@@ -16,7 +16,6 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 @Service
 public class RateScrapingService implements IRateScrapingService {
-
     @Override
     public Map<String, Double> scrapeRates() {
         Map<String, Double> result = new HashMap<>();
@@ -32,17 +31,27 @@ public class RateScrapingService implements IRateScrapingService {
         WebDriver driver = new ChromeDriver(options);
         try {
             driver.get("https://www.bcv.org.ve/");
-            // esperar si es necesario (reemplaza con WebDriverWait si prefieres)
+            
+            // esperar si es necesario 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-            By xpath = By.xpath(
+            By xpathDolares = By.xpath(
                     "/html/body/div[4]/div/div[2]/div/div[1]/div[1]/section[1]/div/div[2]/div/div[7]/div/div/div[2]/strong");
-            wait.until(ExpectedConditions.visibilityOfElementLocated(xpath));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(xpathDolares));
 
             // Luego busca el <strong> dentro del contenedor
-            String rateText = driver.findElement(xpath).getText();
+            String dolaresText = driver.findElement(xpathDolares).getText();
 
-            result.put("Dolares", parseAmount(rateText));
+            result.put("Dolares", parseAmount(dolaresText));
+
+            By xpathEuros = By.xpath(
+                    "/html/body/div[4]/div/div[2]/div/div[1]/div[1]/section[1]/div/div[2]/div/div[3]/div/div/div[2]/strong");
+            wait.until(ExpectedConditions.visibilityOfElementLocated(xpathEuros));
+
+            // Luego busca el <strong> dentro del contenedor
+            String eurosText = driver.findElement(xpathEuros).getText();
+
+            result.put("Euros", parseAmount(eurosText));
 
         } finally {
             driver.quit();
@@ -50,12 +59,7 @@ public class RateScrapingService implements IRateScrapingService {
         return result;
     }
 
-    @Override
-    public boolean scrapeAndDetectChange() {
-
-        return false;
-    }
-
+   
 
     private Double parseAmount(String raw) {
         if (raw == null) return 0.0;
@@ -69,5 +73,6 @@ public class RateScrapingService implements IRateScrapingService {
             return 0.0;
         }
     }
+
 
 }
