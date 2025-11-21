@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.leopoldo.bcv.dtos.Json.JsonApiResponse;
 import com.leopoldo.bcv.dtos.exchange.ExchangeSumaryDto;
+import com.leopoldo.bcv.dtos.history.CreateHistoryDto;
 import com.leopoldo.bcv.exeptions.ApiError;
 import com.leopoldo.bcv.exeptions.ApiException;
 import com.leopoldo.bcv.models.Coin;
@@ -21,6 +22,7 @@ import com.leopoldo.bcv.repositories.ICoinRepository;
 import com.leopoldo.bcv.repositories.IExchangeRepository;
 import com.leopoldo.bcv.repositories.IRateRepository;
 import com.leopoldo.bcv.services.interfaces.IExchangeService;
+import com.leopoldo.bcv.services.interfaces.IHistoryService;
 import com.leopoldo.bcv.services.interfaces.IRateScrapingService;
 
 
@@ -38,6 +40,10 @@ public class ExchangeService implements IExchangeService {
 
     @Autowired
     private IExchangeRepository exchangeRepository;
+
+    @Autowired 
+    private IHistoryService  historyService;
+
 
 
     @Override
@@ -57,6 +63,7 @@ public class ExchangeService implements IExchangeService {
                             .rateName(RateName)
                             .value(exchange.getValue())
                             .previousValue(exchange.getPreviousValue())
+                            .updateAt(exchange.getUpdateAt())
                             .build());
         });
 
@@ -69,21 +76,38 @@ public class ExchangeService implements IExchangeService {
 
     private void currentExchange(){
 
-        Map<String,Double> rateScraping =rateScrapingService.scrapeRates();
+        //buscamos por nombre la tasa y lanzamos exepciones 
         Rate rate = rateRepository.findByName("BCV").orElseThrow(()-> new ApiException(ApiError.RATE_BYNAME_NOT_FOUND));
 
-        rateScraping.forEach((key, currentValue) ->{
+        //llamamos la función que se encarga de capturar los datos de la página oficial del banco central de venezuela
+        Map<String,Double> rateScraping =rateScrapingService.scrapeRates();
+
+        //recorremos nuestro map que contiene el nombre de las monedas capturadas y su valor (dolares, 10.00)
+        rateScraping.forEach((key, currentValueWeb) ->{
+            
+            //buscamos por nombre la moneda y lanzamos exepciones
             Coin coin= coinRepository.findByName(key).orElseThrow(()-> new ApiException(ApiError.COIN_BYNAME_NOT_FOUND));
 
+            //buscamos la tasa de cambio por el nombre de la tasa y la moneda 
             Optional<Exchange> exchangeByCoinName=exchangeRepository.findByCoinAndRate(coin, rate);
 
             exchangeByCoinName.ifPresentOrElse(exchange->{
+                //verificamos si existe una diferencia entre el valor actual y el de la página
+                if(!exchange.getValue().equals(currentValueWeb)){
 
-                if(!exchange.getValue().equals(currentValue)){
-                    
+                    //guardamos el historico 
+                    historyService.save(CreateHistoryDto.builder()
+                                .rateName(rate.getName())
+                                .coinName(coin.getName())
+                                .value(exchange.getValue())
+                                .previousValue(exchange.getPreviousValue())
+                                .createAt(exchange.getUpdateAt())
+                                .build());
+
+                    //actualizamos las tasas 
                     exchange.setPreviousValue(exchange.getValue()); 
-                    exchange.setValue(currentValue); 
-                    exchange.setCreateAt(LocalDateTime.now());
+                    exchange.setValue(currentValueWeb); 
+                    exchange.setUpdateAt(LocalDateTime.now());
                     
                     exchangeRepository.save(exchange);
                 }
