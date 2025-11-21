@@ -1,15 +1,13 @@
 package com.leopoldo.bcv.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import com.leopoldo.bcv.dtos.Json.JsonApiResponse;
 import com.leopoldo.bcv.dtos.exchange.ExchangeSumaryDto;
 import com.leopoldo.bcv.dtos.history.CreateHistoryDto;
@@ -25,42 +23,43 @@ import com.leopoldo.bcv.services.interfaces.IExchangeService;
 import com.leopoldo.bcv.services.interfaces.IHistoryService;
 import com.leopoldo.bcv.services.interfaces.IRateScrapingService;
 
+import jakarta.transaction.Transactional;
+
 
 @Service
 public class ExchangeService implements IExchangeService {
 
-    @Autowired
-    private IRateScrapingService rateScrapingService;
+    private final IRateScrapingService rateScrapingService;
+    private final ICoinRepository coinRepository;
+    private final IRateRepository rateRepository;
+    private final IExchangeRepository exchangeRepository;
+    private final IHistoryService historyService;
 
-    @Autowired
-    private ICoinRepository coinRepository;
-
-    @Autowired 
-    private IRateRepository rateRepository;
-
-    @Autowired
-    private IExchangeRepository exchangeRepository;
-
-    @Autowired 
-    private IHistoryService  historyService;
+    public ExchangeService(IRateScrapingService rateScrapingService,ICoinRepository coinRepository, IRateRepository rateRepository,IExchangeRepository exchangeRepository,IHistoryService historyService) {
+        this.rateScrapingService = rateScrapingService;
+        this.coinRepository = coinRepository;
+        this.rateRepository = rateRepository;
+        this.exchangeRepository = exchangeRepository;
+        this.historyService = historyService;
+    }
 
 
 
     @Override
+  
     public JsonApiResponse findAll() {
 
-        currentExchange();
 
         List<Exchange> exchanges =(List<Exchange>) exchangeRepository.findAll();
         List<ExchangeSumaryDto> exchangeList= new ArrayList<>();
         exchanges.forEach(exchange->{
 
             String coinName= coinRepository.findById(exchange.getCoin().getId()).orElseThrow(() -> new ApiException(ApiError.COIN_BYID_NOT_FOUND)).getName();
-            String RateName= rateRepository.findById(exchange.getRate().getId()).orElseThrow(() -> new ApiException(ApiError.RATE_BYID_NOT_FOUND)).getName();
+            String rateName= rateRepository.findById(exchange.getRate().getId()).orElseThrow(() -> new ApiException(ApiError.RATE_BYID_NOT_FOUND)).getName();
             
             exchangeList.add( ExchangeSumaryDto.builder()
                             .coinName(coinName)
-                            .rateName(RateName)
+                            .rateName(rateName)
                             .value(exchange.getValue())
                             .previousValue(exchange.getPreviousValue())
                             .updateAt(exchange.getUpdateAt())
@@ -74,13 +73,18 @@ public class ExchangeService implements IExchangeService {
                             .build();
     }
 
-    private void currentExchange(){
+    @Transactional
+    public void currentExchange(){
 
         //buscamos por nombre la tasa y lanzamos exepciones 
         Rate rate = rateRepository.findByName("BCV").orElseThrow(()-> new ApiException(ApiError.RATE_BYNAME_NOT_FOUND));
 
         //llamamos la función que se encarga de capturar los datos de la página oficial del banco central de venezuela
-        Map<String,Double> rateScraping =rateScrapingService.scrapeRates();
+        Map<String,BigDecimal> rateScraping =rateScrapingService.scrapeRates();
+
+        if (rateScraping == null || rateScraping.isEmpty()) {
+            throw new ApiException(ApiError.SCRAPER_NO_DATA);
+        }
 
         //recorremos nuestro map que contiene el nombre de las monedas capturadas y su valor (dolares, 10.00)
         rateScraping.forEach((key, currentValueWeb) ->{
@@ -93,7 +97,7 @@ public class ExchangeService implements IExchangeService {
 
             exchangeByCoinName.ifPresentOrElse(exchange->{
                 //verificamos si existe una diferencia entre el valor actual y el de la página
-                if(!exchange.getValue().equals(currentValueWeb)){
+                if(exchange.getValue().compareTo(currentValueWeb) !=0){
 
                     //guardamos el historico 
                     historyService.save(CreateHistoryDto.builder()

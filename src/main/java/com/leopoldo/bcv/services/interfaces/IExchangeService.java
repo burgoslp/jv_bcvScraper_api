@@ -4,4 +4,5 @@ import com.leopoldo.bcv.dtos.Json.JsonApiResponse;
 
 public interface IExchangeService {
     JsonApiResponse findAll();
+    void currentExchange();
 }

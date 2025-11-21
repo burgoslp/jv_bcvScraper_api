@@ -1,7 +1,9 @@
 package com.leopoldo.bcv.models;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,9 +41,15 @@ public class Exchange {
     private Coin coin;
 
     @NotNull
-    private Double value;
+    @Digits(integer=4, fraction=8)
+    @Column(name = "value", precision = 12, scale = 8)
+    private BigDecimal value;
+
     @NotNull
-    private Double previousValue;
+    @Digits(integer=4, fraction=8)
+    @Column(name = "previous_value", precision = 12, scale = 8)
+    private BigDecimal previousValue;
     //@Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "la fecha de publicación debe tener el siguiente formato YYYY-MM-DD")
+    @NotNull
     private LocalDateTime updateAt; //  2023-10-05T14:30:00
 }

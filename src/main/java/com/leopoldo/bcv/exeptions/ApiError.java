@@ -11,7 +11,8 @@ public enum ApiError {
     COIN_BYID_NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "Algunos de los argumentos ingresados no son correctos",List.of("")),
     COIN_BYNAME_NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "lA moneda por nombre no se encontró",List.of("")),
     COIN_ALREADY_EXIST(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "La moneda ya está asociada a la tasa de cambio.",List.of("")),
-    COIN_BYNAME_NOT_FOUND_IN_EXCHANGE(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "La moneda no existe en ninguna tasa cambiaria.",List.of(""));
+    COIN_BYNAME_NOT_FOUND_IN_EXCHANGE(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "La moneda no existe en ninguna tasa cambiaria.",List.of("")),
+    SCRAPER_NO_DATA(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "El resultado del scraping no contiene datos.",List.of(""));
     
 
     private final Integer code;

@@ -1,5 +1,6 @@
 package com.leopoldo.bcv.services;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,15 +11,24 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.leopoldo.bcv.services.interfaces.IRateScrapingService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 @Service
 public class RateScrapingService implements IRateScrapingService {
+
+    @Value("${scraper.url}")
+    private String url;
+
+    @Value("${scraper.timeout-seconds:20}")
+    private int timeoutSeconds;
+    
+
     @Override
-    public Map<String, Double> scrapeRates() {
-        Map<String, Double> result = new HashMap<>();
+    public Map<String, BigDecimal> scrapeRates() {
+        Map<String, BigDecimal> result = new HashMap<>();
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless=new");
@@ -30,10 +40,10 @@ public class RateScrapingService implements IRateScrapingService {
     
         WebDriver driver = new ChromeDriver(options);
         try {
-            driver.get("https://www.bcv.org.ve/");
+            driver.get(url);
             
             // esperar si es necesario 
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds));
 
             By xpathDolares = By.xpath(
                     "/html/body/div[4]/div/div[2]/div/div[1]/div[1]/section[1]/div/div[2]/div/div[7]/div/div/div[2]/strong");
@@ -61,16 +71,16 @@ public class RateScrapingService implements IRateScrapingService {
 
    
 
-    private Double parseAmount(String raw) {
-        if (raw == null) return 0.0;
+    private BigDecimal parseAmount(String cadena) {
+        if (cadena == null) return BigDecimal.ZERO;
 
-        String cleaned = raw.replaceAll("[^0-9,\\.\\-]", "").replace(",", ".");
-        if (cleaned.isEmpty()) return 0.0;
+        String formato = cadena.replaceAll("[^0-9,\\.\\-]", "").replace(",", ".");
+        if (formato.isEmpty()) return  BigDecimal.ZERO;
         
         try {
-            return Double.parseDouble(cleaned);
+            return BigDecimal.valueOf(Double.parseDouble(formato));
         } catch (NumberFormatException e) {
-            return 0.0;
+            return  BigDecimal.ZERO;
         }
     }
 

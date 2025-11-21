@@ -1,5 +1,6 @@
 package com.leopoldo.bcv.dtos.exchange;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -15,8 +16,8 @@ public class ExchangeSumaryDto {
     
     private String coinName;
     private String rateName;
-    private Double value;
-    private Double previousValue;
+    private BigDecimal value;
+    private BigDecimal previousValue;
     private LocalDateTime updateAt;
 
 }

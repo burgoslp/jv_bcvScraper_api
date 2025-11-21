@@ -1,5 +1,6 @@
 package com.leopoldo.bcv.dtos.history;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotNull;
@@ -18,9 +19,9 @@ public class CreateHistoryDto {
     @NotNull
     private String coinName; 
     @NotNull
-    private Double value;
+    private BigDecimal value;
     @NotNull
-    private Double previousValue;
+    private BigDecimal previousValue;
     @NotNull
     private LocalDateTime createAt; 
 }

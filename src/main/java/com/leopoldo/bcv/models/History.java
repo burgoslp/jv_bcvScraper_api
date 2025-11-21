@@ -1,11 +1,14 @@
 package com.leopoldo.bcv.models;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,9 +30,13 @@ public class History {
     @NotNull
     private String coinName; 
     @NotNull
-    private Double value;
+    @Digits(integer = 4, fraction = 8)
+    @Column(name = "value", precision = 12, scale = 8)
+    private BigDecimal value;
     @NotNull
-    private Double previousValue;
+    @Digits(integer = 4, fraction = 8)
+    @Column(name = "previous_value", precision = 12, scale = 8)
+    private BigDecimal previousValue;
     @NotNull
     private LocalDateTime createAt; 
 }
