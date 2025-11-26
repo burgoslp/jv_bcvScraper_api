@@ -5,7 +5,7 @@ Microservicio REST desarrollado con **Java 17** y **Spring Boot** que proporcion
 Proveer una API integrable con cualquier sistema para cálculos de servicios, productos o facturación utilizando las tasas de cambio oficiales emitidas por el BCV.
 
 ## 🚀 Características Principales
-* **Web Scraping Automático:** Obtención de tasas desde el BCV cada 4 horas.
+* **Web Scraping Automático:** Obtención de tasas desde el BCV  en horarios programados.
 * **API REST:** Endpoints para consulta de tasas de cambio.
 * **Persistencia:** Almacenamiento en base de datos MySQL.
 * **Arquitectura Limpia:** Separación de responsabilidades con schedulers.
