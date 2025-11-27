@@ -18,7 +18,7 @@ public class ScraperScheduler {
         this.exchangeService = exchangeService;
     }
 
-    @Scheduled(fixedDelayString = "${scraper.schedule.fixed-delay-ms}")
+    @Scheduled(cron = "${scraper.schedule.cron}", zone = "${scraper.schedule.zone:UTC}")
     public void runScraper() {
         log.info("Scheduled scraper inicia su ejecución");
         try {
