@@ -40,7 +40,7 @@ src/main/java/com/leopoldo/bcv/
 ├── schedulers/         # Tareas programadas (scraping)
 ├── mappers/            # Mapeos de los Dtos (MapStruct)
 └── services/           # Lógica de negocio
-
+```
 
 ## Diagrama de la base de datos:
 <img width="806" height="619" alt="Untitled" src="https://github.com/user-attachments/assets/c814463c-91fb-4b16-a898-a2ab958885a8" />
