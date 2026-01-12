@@ -46,5 +46,16 @@ src/main/java/com/leopoldo/bcv/
 <img width="806" height="619" alt="Untitled" src="https://github.com/user-attachments/assets/c814463c-91fb-4b16-a898-a2ab958885a8" />
 
 
+## 📜 Listado de endpoints 
+la api cuenta con multiples rutas que nos permite la consulta de las diferentes tasas y forzar el scraping.
+
+<a name="indice"></a>
+## 📑 Índice de Endpoints
+
+- 📊 [1. Listar todas las tasas](#1-listar-todas-las-tasas)
+- 💵 [1. Listar tasa del dolar](#1-listar-tasa-dolar)
+- 💶 [1. Listar tasa del euro](#1-listar-tasa-euro)
+- 📅 [1. Consultar Histórico por Fecha](#1-listar-historico-por-fecha)
+- 🔄 [1. Forzar scraping Manual](#1-forzar-scraping-manual)
 
 
