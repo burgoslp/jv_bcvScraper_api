@@ -38,4 +38,5 @@ src/main/java/com/leopoldo/bcv/
 ├── models/             # Entidades JPA
 ├── repositories/       # Interfaces de repositorio
 ├── schedulers/         # Tareas programadas (scraping)
+├── mappers/            # Mapeos de los Dtos (MapStruct)
 └── services/           # Lógica de negocio
