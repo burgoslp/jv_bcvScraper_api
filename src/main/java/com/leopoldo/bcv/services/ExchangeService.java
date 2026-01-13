@@ -2,7 +2,6 @@ package com.leopoldo.bcv.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,6 +24,8 @@ import com.leopoldo.bcv.services.interfaces.IRateScrapingService;
 
 import jakarta.transaction.Transactional;
 
+import com.leopoldo.bcv.mappers.ExchangeMapper;
+
 
 @Service
 public class ExchangeService implements IExchangeService {
@@ -34,37 +35,25 @@ public class ExchangeService implements IExchangeService {
     private final IRateRepository rateRepository;
     private final IExchangeRepository exchangeRepository;
     private final IHistoryService historyService;
+    private final ExchangeMapper exchangeMapper;
 
-    public ExchangeService(IRateScrapingService rateScrapingService,ICoinRepository coinRepository, IRateRepository rateRepository,IExchangeRepository exchangeRepository,IHistoryService historyService) {
+    public ExchangeService(IRateScrapingService rateScrapingService,ICoinRepository coinRepository, IRateRepository rateRepository,IExchangeRepository exchangeRepository,IHistoryService historyService, ExchangeMapper exchangeMapper) {
         this.rateScrapingService = rateScrapingService;
         this.coinRepository = coinRepository;
         this.rateRepository = rateRepository;
         this.exchangeRepository = exchangeRepository;
         this.historyService = historyService;
+        this.exchangeMapper = exchangeMapper;
     }
 
 
 
     @Override
-  
     public JsonApiResponse findAll() {
 
 
         List<Exchange> exchanges =(List<Exchange>) exchangeRepository.findAll();
-        List<ExchangeSumaryDto> exchangeList= new ArrayList<>();
-        exchanges.forEach(exchange->{
-
-            String coinName= coinRepository.findById(exchange.getCoin().getId()).orElseThrow(() -> new ApiException(ApiError.COIN_BYID_NOT_FOUND)).getName();
-            String rateName= rateRepository.findById(exchange.getRate().getId()).orElseThrow(() -> new ApiException(ApiError.RATE_BYID_NOT_FOUND)).getName();
-            
-            exchangeList.add( ExchangeSumaryDto.builder()
-                            .coinName(coinName)
-                            .rateName(rateName)
-                            .value(exchange.getValue())
-                            .previousValue(exchange.getPreviousValue())
-                            .updateAt(exchange.getUpdateAt())
-                            .build());
-        });
+        List<ExchangeSumaryDto> exchangeList = exchangeMapper.toDto(exchanges);
 
         return JsonApiResponse.builder()
                             .code(HttpStatus.OK.value())
