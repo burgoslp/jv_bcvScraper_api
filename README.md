@@ -53,8 +53,7 @@ la api cuenta con multiples rutas que nos permite la consulta de las diferentes 
 ## 📑 Índice de Endpoints
 
 - 📊 [1. Listar todas las tasas](#1-listar-todas-las-tasas)
-- 💵 [1. Listar tasa del dolar](#1-listar-tasa-dolar)
-- 💶 [1. Listar tasa del euro](#1-listar-tasa-euro)
+- 💵 [1. Listar tasas Por Nombre](#1-listar-tasas-por-nombre)
 - 📅 [1. Consultar Histórico por Fecha](#1-listar-historico-por-fecha)
 - 🔄 [1. Forzar scraping Manual](#1-forzar-scraping-manual)
 
