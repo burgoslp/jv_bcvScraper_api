@@ -1,5 +1,5 @@
 ## 📋 Descripción del Proyecto
-Microservicio REST desarrollado con **Java 17** y **Spring Boot** que proporciona tasas de cambio oficiales del Banco Central de Venezuela (BCV) para dólares y euros. El sistema realiza web scraping automático cada 4 horas para mantener actualizada la información.
+Microservicio REST desarrollado con **Java 17** y **Spring Boot** que proporciona tasas de cambio oficiales del Banco Central de Venezuela (BCV) para dólares y euros. El sistema realiza web scraping automático separado de las peticiones http cada 4 horas para mantener actualizada la información.
 
 ## 🎯 Objetivo
 Proveer una API integrable con cualquier sistema para cálculos de servicios, productos o facturación utilizando las tasas de cambio oficiales emitidas por el BCV.
