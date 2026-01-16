@@ -1,7 +1,9 @@
 package com.leopoldo.bcv.services;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -62,6 +64,22 @@ public class ExchangeService implements IExchangeService {
                             .build();
     }
 
+    @Override
+    public JsonApiResponse findByCoinName(String coinName) {
+        List<Exchange> exchanges = exchangeRepository.findByCoin_Name(coinName);
+        List<ExchangeSumaryDto> exchangeList = exchangeMapper.toDto(exchanges);
+
+        if (exchangeList.isEmpty()) {
+            throw new ApiException(ApiError.COIN_BYNAME_NOT_FOUND_IN_EXCHANGE);
+        }
+
+        return JsonApiResponse.builder()
+                            .code(HttpStatus.OK.value())
+                            .message(HttpStatus.OK.getReasonPhrase())
+                            .data(exchangeList)
+                            .build();
+    }
+
     @Transactional
     public void currentExchange(){
 
@@ -78,7 +96,7 @@ public class ExchangeService implements IExchangeService {
         //recorremos nuestro map que contiene el nombre de las monedas capturadas y su valor (dolares, 10.00)
         rateScraping.forEach((key, currentValueWeb) ->{
             
-            //buscamos por nombre la moneda y lanzamos exepciones
+            //buscamos por nombre la moneda y lanzamos exepciones en caso de que la moneda no exista en nuestra base de datos
             Coin coin= coinRepository.findByName(key).orElseThrow(()-> new ApiException(ApiError.COIN_BYNAME_NOT_FOUND));
 
             //buscamos la tasa de cambio por el nombre de la tasa y la moneda 
