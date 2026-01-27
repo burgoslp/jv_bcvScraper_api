@@ -150,3 +150,21 @@ la fecha debe tener el formato (yyyy-mm-dd).
     ]
 }
 ```
+<a name="4-forzar-scraping-manual"></a>
+## 📅 4. Forzar scraping Manual [🔙](#indice)
+
+**Método:** `GET`  
+**Endpoint:** `/rateScraping/v1/exchanges/force`
+**Validación:** `SIN AUTENTICACIÓN` 
+
+#### 📝 Descripción
+Fuerza el scraping para obtener los datos de la página oficial del bcv sin necesidad de espera los horarios programados.
+
+#### 📥 Request Body
+```json
+{
+    "code": 200,
+    "message": "Scraping forzado con exito.",
+    "data": null
+}
+```
