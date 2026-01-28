@@ -1,5 +1,6 @@
 package com.leopoldo.bcv.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.leopoldo.bcv.dtos.Json.JsonApiResponse;
 import com.leopoldo.bcv.dtos.history.CreateHistoryDto;
+import com.leopoldo.bcv.mappers.HistoryMapper;
 import com.leopoldo.bcv.models.History;
 import com.leopoldo.bcv.repositories.IHistoryRepository;
 import com.leopoldo.bcv.services.interfaces.IHistoryService;
@@ -18,16 +20,25 @@ public class HistoryService implements IHistoryService {
 
     @Autowired
     private IHistoryRepository historyRepository;
-
+    @Autowired
+    private HistoryMapper historyMapper;
 
     @Override
-    public JsonApiResponse findAll() {
-       
+    public JsonApiResponse findAllByCreateAtBetween(String coinName,String start, String end) {
 
+         LocalDate startDate = LocalDate.parse(start);
+        LocalDate endDate = LocalDate.parse(end);
+
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay().minusNanos(1);
+
+        List<History> results = historyRepository.findAllByCoinNameAndCreateAtBetween(coinName,startDateTime, endDateTime);
+
+        System.out.println("aqui");
         return JsonApiResponse.builder()
                             .code(HttpStatus.OK.value())
                             .message(HttpStatus.OK.getReasonPhrase())
-                            .data((List<History>)historyRepository.findAll())
+                            .data(historyMapper.toDto(results))
                             .build();
     }
 

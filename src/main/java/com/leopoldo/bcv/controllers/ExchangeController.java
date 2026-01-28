@@ -1,6 +1,8 @@
 package com.leopoldo.bcv.controllers;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +11,7 @@ import com.leopoldo.bcv.dtos.Json.JsonApiResponse;
 import com.leopoldo.bcv.services.interfaces.IExchangeService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 @RestController
@@ -25,6 +28,18 @@ public class ExchangeController {
     @GetMapping("/coin/{coinName}")
     public ResponseEntity<JsonApiResponse> findByCoinName(@PathVariable String coinName) {
         return ResponseEntity.ok().body(exchangeService.findByCoinName(coinName));
+    }
+    
+    @GetMapping("/force")
+    public ResponseEntity<JsonApiResponse> forceScraping() {
+
+        exchangeService.currentExchange();
+
+        return ResponseEntity.ok().body(JsonApiResponse.builder()
+                                                    .code(HttpStatus.OK.value())
+                                                    .message("Scraping forzado con exito.")
+                                                    .data(null)
+                                                    .build());
     }
     
 }
