@@ -53,8 +53,118 @@ la api cuenta con multiples rutas que nos permite la consulta de las diferentes 
 ## 📑 Índice de Endpoints
 
 - 📊 [1. Listar todas las tasas](#1-listar-todas-las-tasas)
-- 💵 [1. Listar tasas Por Nombre](#1-listar-tasas-por-nombre)
-- 📅 [1. Consultar Histórico por Fecha](#1-listar-historico-por-fecha)
-- 🔄 [1. Forzar scraping Manual](#1-forzar-scraping-manual)
+- 💵 [2. Listar tasas Por Nombre](#2-listar-tasas-por-nombre)
+- 📅 [3. Consultar Histórico por rango de Fecha y nombre de moneda](#3-listar-historico-por-rango-fecha-nombre)
+- 🔄 [4. Forzar scraping Manual](#4-forzar-scraping-manual)
 
 
+<a name="1-listar-todas-las-tasas"></a>
+## 📊 1. Listar todas las tasas [🔙](#indice)
+
+**Método:** `GET`  
+**Endpoint:** `/rateScraping/v1/exchanges`
+**Validación:** `SIN AUTENTICACIÓN` 
+
+#### 📝 Descripción
+Listas todas las tasas de cambio existentes, la api ya tiene predetarminada la tasa de cambio del BCV
+
+#### 📥 Request Body
+```json
+{
+    "code": 200,
+    "message": "OK",
+    "data": [
+        {
+            "coinName": "Dolares",
+            "rateName": "BCV",
+            "value": 358.92470000,
+            "previousValue": 0E-8,
+            "updateAt": "2026-01-27T15:14:12"
+        },
+        {
+            "coinName": "Euros",
+            "rateName": "BCV",
+            "value": 426.18718878,
+            "previousValue": 0E-8,
+            "updateAt": "2026-01-27T15:14:12"
+        }
+    ]
+}
+```
+
+
+<a name="3-listar-historico-por-fecha"></a>
+## 💵 2. Listar tasas Por Nombre [🔙](#indice)
+
+**Método:** `GET`  
+**Endpoint:** `/rateScraping/v1/exchanges/{coinName}`
+**Validación:** `SIN AUTENTICACIÓN` 
+
+#### 📝 Descripción
+Lista todas las tasas de cambio que contengan el nombre de la moneda, predertarminadamente el sistema solo tiene dos monedas (euros y dolares)
+
+#### 📥 Request Body
+```json
+{
+    "code": 200,
+    "message": "OK",
+    "data": [
+        {
+            "coinName": "Dolares",
+            "rateName": "BCV",
+            "value": 358.92470000,
+            "previousValue": 0E-8,
+            "updateAt": "2026-01-27T15:14:12"
+        }
+    ]
+}
+```
+<a name="3-listar-historico-por-rango-fecha-nombre"></a>
+## 📅 3. Consultar Histórico por rango de Fecha y nombre de moneda [🔙](#indice)
+
+**Método:** `GET`  
+**Endpoint:** `/rateScraping/history/coin/{coinName}/between/{start}/{end}`
+**Validación:** `SIN AUTENTICACIÓN` 
+
+#### 📝 Descripción
+Lista todas las tasas de cambio del historico que contengan el nombre de la moneda en un rago de fecha, el sistema solo cuenta con dos monedas (euros y dolares)
+la fecha debe tener el formato (yyyy-mm-dd).
+
+#### 📝 Ejemplo de consulta
+**Endpoint:** `/rateScraping/history/coin/dolares/between/2026-01-27/2026-01-27`
+
+#### 📥 Request Body
+```json
+{
+    "code": 200,
+    "message": "OK",
+    "data": [
+        {
+            "id": 1,
+            "rateName": "BCV",
+            "coinName": "Dolares",
+            "value": 0E-8,
+            "previousValue": 0E-8,
+            "createAt": "2026-01-27T14:50:45"
+        }
+    ]
+}
+```
+<a name="4-forzar-scraping-manual"></a>
+## 📅 4. Forzar scraping Manual [🔙](#indice)
+
+**Método:** `GET`  
+**Endpoint:** `/rateScraping/v1/exchanges/force`
+**Validación:** `SIN AUTENTICACIÓN` 
+
+#### 📝 Descripción
+Fuerza el scraping para obtener los datos de la página oficial del bcv sin necesidad de espera los horarios programados.
+
+#### 📥 Request Body
+```json
+{
+    "code": 200,
+    "message": "Scraping forzado con exito.",
+    "data": null
+}
+```
