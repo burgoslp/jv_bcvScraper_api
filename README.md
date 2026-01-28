@@ -127,7 +127,7 @@ Lista todas las tasas de cambio que contengan el nombre de la moneda, predertarm
 **Validación:** `SIN AUTENTICACIÓN` 
 
 #### 📝 Descripción
-Lista todas las tasas de cambio del historico que contengan el nombre de la moneda en un rago de fecha, predertarminadamente el sistema solo tiene dos monedas (euros y dolares)
+Lista todas las tasas de cambio del historico que contengan el nombre de la moneda en un rago de fecha, el sistema solo cuenta con dos monedas (euros y dolares)
 la fecha debe tener el formato (yyyy-mm-dd).
 
 #### 📝 Ejemplo de consulta
